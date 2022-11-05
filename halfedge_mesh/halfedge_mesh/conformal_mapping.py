@@ -11,7 +11,6 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
 
     def star_map(self):
         """map the vertices in the star of a vertex"""
-        # mapping = {}
         avg_point = [0.0, 0.0, 0.0]
         for vertex in self.vertices:
             avg_point[0] += vertex.x
@@ -19,13 +18,6 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             avg_point[2] += vertex.z
         avg_point = [x / len(self.vertices) for x in avg_point]
         for vertex in self.vertices:
-            # v_temp = halfedge_mesh.Vertex(
-            #     index=vertex.index,
-            #     x=vertex.x,
-            #     y=vertex.y,
-            #     z=vertex.z,
-            #     halfedge=vertex.halfedge,
-            # )
             vertex.x -= avg_point[0]
             vertex.y -= avg_point[1]
             vertex.z -= avg_point[2]
@@ -33,9 +25,6 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             vertex.x /= norm
             vertex.y /= norm
             vertex.z /= norm
-            # mapping[vertex.index] = v_temp
-
-        # return mapping
 
     def give_mapped_mesh(self, mapping):
         vertex_list = []  # stores the vertex list of spherical mesh
@@ -58,9 +47,6 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
     def gauss_map(self):
         # mapping = {}
         for vertex in self.vertices:
-            # new_vertex = halfedge_mesh.Vertex(
-            #     index=vertex.index, halfedge=vertex.halfedge
-            # )
             face_list = self.get_faces_of_vertex(vertex)
             for face in face_list:
                 face_normal = face.get_normal()
@@ -71,8 +57,6 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             vertex.x /= norm
             vertex.y /= norm
             vertex.z /= norm
-            # mapping[vertex.index] = new_vertex
-        # return mapping
 
     def vertex_normal(self, vertex):
         face_list = self.get_faces_of_vertex(vertex)
@@ -165,13 +149,11 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
                 if string == "harmonic":
                     gradient = [x + y for x, y in zip(gradient, temp_grad)]
                     gradient = [x * neighbor_halfedges[i].kuv for x in gradient]
-                    # temp_grad = [x * neighbor_halfedges[i].kuv for x in temp_grad]
-                    # gradient = [x + y for x, y in zip(gradient, temp_grad)]
                 else:
                     gradient = [x + y for x, y in zip(gradient, temp_grad)]
             vertex.abs_gradient = self.calculate_abs_dev(gradient, vertex)
 
-    def update_mesh(self, dt=0.01):
+    def update_mesh(self, dt=0.05):
         for vertex in self.vertices:
             vertex.x -= dt * vertex.abs_gradient[0]
             vertex.y -= dt * vertex.abs_gradient[1]
@@ -191,7 +173,9 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             self.compute_gradient()
             self.update_mesh()
             curr_energy = self.compute_energy()
-            print(f"Current Tuette energy - {i}: {curr_energy}")
+            print(
+                f"Current Tuette energy - {i}: {curr_energy}, Diff: {curr_energy - prev_energy}"
+            )
             i += 1
 
     def conformal_mapping(self):
