@@ -297,6 +297,9 @@ class Vertex:
     def norm(self):
         return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
 
+    def subtract(v1, v2):
+        return [v1.x - v2.x, v1.y - v2.y, v1.z - v2.z]
+
 
 class Facet:
     def __init__(self, a=-1, b=-1, c=-1, index=None, halfedge=None):
@@ -372,7 +375,15 @@ class Facet:
 
 class Halfedge:
     def __init__(
-        self, next=None, opposite=None, prev=None, vertex=None, facet=None, index=None
+        self,
+        next=None,
+        opposite=None,
+        prev=None,
+        vertex=None,
+        facet=None,
+        index=None,
+        kuv=None,
+        abs_gradient=None,
     ):
         """Create a halfedge with given index."""
         self.opposite = opposite
@@ -381,6 +392,8 @@ class Halfedge:
         self.vertex = vertex
         self.facet = facet
         self.index = index
+        self.kuv = kuv
+        self.abs_gradient = abs_gradient
 
     def __eq__(self, other):
         # TODO Test more
