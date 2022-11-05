@@ -264,7 +264,17 @@ class HalfedgeMesh:
 
 
 class Vertex:
-    def __init__(self, x=0, y=0, z=0, index=None, halfedge=None):
+    def __init__(
+        self,
+        x=0,
+        y=0,
+        z=0,
+        index=None,
+        halfedge=None,
+        vertex_neighbors=None,
+        face_neighbors=None,
+        halfedge_neighbors=None,
+    ):
         """Create a vertex with given index at given point.
 
         x        - x-coordinate of the point
@@ -272,6 +282,8 @@ class Vertex:
         z        - z-coordinate of the point
         index    - integer index of this vertex
         halfedge - a halfedge that points to the vertex
+        vertex_neighbors - list of neighboring vertices
+        face_neighbors - list of neighboring faces
         """
 
         self.x = x
@@ -281,6 +293,9 @@ class Vertex:
         self.index = index
 
         self.halfedge = halfedge
+        self.vertex_neighbors = vertex_neighbors
+        self.face_neighbors = face_neighbors
+        self.halfedge_neighbors = halfedge_neighbors
 
     def __eq__(x, y):
         return x.__key() == y.__key() and type(x) == type(y)

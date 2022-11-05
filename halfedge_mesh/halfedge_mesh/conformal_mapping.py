@@ -59,7 +59,8 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             vertex.z /= norm
 
     def vertex_normal(self, vertex):
-        face_list = self.get_faces_of_vertex(vertex)
+        # face_list = self.get_faces_of_vertex(vertex)
+        face_list = vertex.face_neighbors
         normal = [0.0, 0.0, 0.0]
         for face in face_list:
             normal[0] += face.get_normal()[0]
@@ -143,7 +144,9 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
     def compute_gradient(self, string="tuette"):
         for vertex in self.vertices:
             gradient = [0.0, 0.0, 0.0]
-            neighbor_vertices, neighbor_halfedges = self.get_vertices_of_vertex(vertex)
+            # neighbor_vertices, neighbor_halfedges = self.get_vertices_of_vertex(vertex)
+            neighbor_vertices = vertex.vertex_neighbors
+            neighbor_halfedges = vertex.halfedge_neighbors
             for i in range(len(neighbor_vertices)):
                 temp_grad = Vertex.subtract(vertex, neighbor_vertices[i])
                 if string == "harmonic":
@@ -178,7 +181,16 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             )
             i += 1
 
+    def init_mesh_neighboring(self):
+        for vertex in self.vertices:
+            vertex.vertex_neighbors = self.get_vertices_of_vertex(vertex)[0]
+            vertex.halfedge_neighbors = self.get_vertices_of_vertex(vertex)[1]
+            vertex.face_neighbors = self.get_faces_of_vertex(vertex)
+
+        pass
+
     def conformal_mapping(self):
+        self.init_mesh_neighboring()
         self.init_kuv()
         self.star_map()
         # self.give_mapped_mesh(mapping)

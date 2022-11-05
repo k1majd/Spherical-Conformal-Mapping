@@ -21,7 +21,7 @@ def arg_parser():
         "--mesh",
         type=str,
         nargs="?",
-        default="brain",
+        default="brain_tuetee",
         help="Mesh name. Type: str.",
     )
     parser.add_argument(
@@ -66,8 +66,9 @@ def main(mesh_name):
     save_path = f"{mesh_name}1"
 
     mesh = halfedge_mesh.ConformalMap(mesh_path)
-    mesh.conformal_mapping()
+    # mesh.conformal_mapping()
     save_halfmesh_as_obj(mesh, f"{save_path}")
+    # save_halfmesh_as_off(mesh, f"{save_path}")
 
     # for i in range(iterations - 1):
     #     print(f"loop subdivision, iteration {i + 1}")
