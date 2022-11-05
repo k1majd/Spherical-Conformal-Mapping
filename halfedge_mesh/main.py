@@ -21,7 +21,7 @@ def arg_parser():
         "--mesh",
         type=str,
         nargs="?",
-        default="cube",
+        default="brain",
         help="Mesh name. Type: str.",
     )
     parser.add_argument(
@@ -59,31 +59,35 @@ def save_halfmesh_as_off(mesh, file_name):
             open_file.write("3 {} {} {}\n".format(face.a, face.b, face.c))
 
 
-def main(mesh_name, iterations):
+def main(mesh_name):
     cwd = os.path.dirname(os.path.realpath(__file__))
     # mesh_path = f"halfedge_mesh/tests/data/{mesh_name}.off"
     mesh_path = cwd + f"/tests/data/{mesh_name}.off"
-    save_path = f"{mesh_name}"
+    save_path = f"{mesh_name}1"
 
-    for i in range(iterations - 1):
-        print(f"loop subdivision, iteration {i + 1}")
-        mesh = halfedge_mesh.SubDivider(mesh_path)
-        if i > 0:
-            # remove the old mesh
-            os.remove(mesh_path)
-        new_mesh = mesh.loop_subdivision()
-        save_halfmesh_as_off(new_mesh, f"{save_path}_{i+1}")
-        mesh_path = f"{save_path}_{i+1}.off"
-    print("loop subdivision, iteration", iterations)
-    mesh = halfedge_mesh.SubDivider(mesh_path)
-    new_mesh = mesh.loop_subdivision()
-    if iterations > 1:
-        os.remove(mesh_path)
-    save_halfmesh_as_obj(new_mesh, f"{save_path}_{iterations}")
-    current_directory = os.getcwd() + "/" + f"{save_path}_{iterations}.obj"
-    print("mesh saved at", current_directory)
+    mesh = halfedge_mesh.ConformalMap(mesh_path)
+    mesh.conformal_mapping()
+    save_halfmesh_as_obj(mesh, f"{save_path}")
+
+    # for i in range(iterations - 1):
+    #     print(f"loop subdivision, iteration {i + 1}")
+    #     mesh = halfedge_mesh.ConformalMap(mesh_path)
+    #     if i > 0:
+    #         # remove the old mesh
+    #         os.remove(mesh_path)
+    #     new_mesh = mesh.conformal_mapping()
+    #     save_halfmesh_as_off(new_mesh, f"{save_path}_{i+1}")
+    #     mesh_path = f"{save_path}_{i+1}.off"
+    # print("loop subdivision, iteration", iterations)
+    # mesh = halfedge_mesh.SubDivider(mesh_path)
+    # new_mesh = mesh.loop_subdivision()
+    # if iterations > 1:
+    #     os.remove(mesh_path)
+    # save_halfmesh_as_obj(new_mesh, f"{save_path}_{iterations}")
+    # current_directory = os.getcwd() + "/" + f"{save_path}_{iterations}.obj"
+    # print("mesh saved at", current_directory)
 
 
 if __name__ == "__main__":
     args = arg_parser()
-    main(args.mesh, args.iterations)
+    main(args.mesh)

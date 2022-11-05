@@ -294,6 +294,9 @@ class Vertex:
     def get_vertex(self):
         return [self.x, self.y, self.z]
 
+    def norm(self):
+        return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+
 
 class Facet:
     def __init__(self, a=-1, b=-1, c=-1, index=None, halfedge=None):

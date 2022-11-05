@@ -10,3 +10,4 @@ from .halfedge_mesh import make_iterable
 from .halfedge_mesh import allclose
 from .halfedge_mesh import create_vector
 from .loop_subdivision import SubDivider
+from .conformal_mapping import ConformalMap
