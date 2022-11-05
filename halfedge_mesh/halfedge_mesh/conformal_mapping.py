@@ -74,6 +74,19 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             # mapping[vertex.index] = new_vertex
         # return mapping
 
+    def vertex_normal(self, vertex):
+        face_list = self.get_faces_of_vertex(vertex)
+        normal = [0.0, 0.0, 0.0]
+        for face in face_list:
+            normal[0] += face.get_normal()[0]
+            normal[1] += face.get_normal()[1]
+            normal[2] += face.get_normal()[2]
+        norm = ConformalMap.norm(normal)
+        normal[0] /= norm
+        normal[1] /= norm
+        normal[2] /= norm
+        return normal
+
     def init_kuv(self):
         for he in self.halfedges:
             v1 = he.vertex
@@ -115,7 +128,7 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             if not he.opposite.index in explored_he:
                 explored_he.append(he.index)
                 v1 = he.vertex
-                v2 = he.prev.vertex
+                v2 = he.opposite.vertex
                 v12 = Vertex.subtract(v1, v2)
                 if string == "harmonic":
                     energy += he.kuv * ConformalMap.norm2(v12)
@@ -131,16 +144,17 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
         halfedge = vertex.halfedge.opposite.prev
         while halfedge != vertex.halfedge:
             halfede_list.append(halfedge)
-            vertex_list.append(halfedge.prev.vertex)
+            vertex_list.append(halfedge.opposite.vertex)
             halfedge = halfedge.opposite.prev
-        vertex_list.append(halfedge.vertex)
+        vertex_list.append(halfedge.opposite.vertex)
         halfede_list.append(halfedge)
         return vertex_list, halfede_list
 
     def calculate_abs_dev(self, gradient, vertex):
-        point = [vertex.x, vertex.y, vertex.z]
-        innerprod = ConformalMap.inner_product(gradient, point)
-        return [x - innerprod * y for x, y in zip(gradient, point)]
+        # point = [vertex.x, vertex.y, vertex.z]
+        vertex_normal = self.vertex_normal(vertex)
+        innerprod = ConformalMap.inner_product(gradient, vertex_normal)
+        return [x - innerprod * y for x, y in zip(gradient, vertex_normal)]
 
     def compute_gradient(self, string="tuette"):
         for vertex in self.vertices:
