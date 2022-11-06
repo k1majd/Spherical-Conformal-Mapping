@@ -21,7 +21,7 @@ def arg_parser():
         "--mesh",
         type=str,
         nargs="?",
-        default="brain_tuetee",
+        default="brain",
         help="Mesh name. Type: str.",
     )
     parser.add_argument(
@@ -63,11 +63,11 @@ def main(mesh_name):
     cwd = os.path.dirname(os.path.realpath(__file__))
     # mesh_path = f"halfedge_mesh/tests/data/{mesh_name}.off"
     mesh_path = cwd + f"/tests/data/{mesh_name}.off"
-    save_path = f"{mesh_name}1"
+    save_path = f"{mesh_name}"
 
     mesh = halfedge_mesh.ConformalMap(mesh_path)
-    # mesh.conformal_mapping()
-    save_halfmesh_as_obj(mesh, f"{save_path}")
+    mesh.conformal_mapping(save_path)
+    # save_halfmesh_as_obj(mesh, f"{save_path}")
     # save_halfmesh_as_off(mesh, f"{save_path}")
 
     # for i in range(iterations - 1):

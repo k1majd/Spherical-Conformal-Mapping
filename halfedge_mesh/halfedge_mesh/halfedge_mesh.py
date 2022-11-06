@@ -274,6 +274,7 @@ class Vertex:
         vertex_neighbors=None,
         face_neighbors=None,
         halfedge_neighbors=None,
+        area=None,
     ):
         """Create a vertex with given index at given point.
 
@@ -296,6 +297,7 @@ class Vertex:
         self.vertex_neighbors = vertex_neighbors
         self.face_neighbors = face_neighbors
         self.halfedge_neighbors = halfedge_neighbors
+        self.area = area
 
     def __eq__(x, y):
         return x.__key() == y.__key() and type(x) == type(y)
@@ -386,6 +388,38 @@ class Facet:
         normal = normalize(normal)
 
         return normal
+
+    def get_area(self):
+        """Calculate the normal of facet
+
+        Return a python list that contains the normal
+        """
+        vertex_a = [
+            self.halfedge.vertex.x,
+            self.halfedge.vertex.y,
+            self.halfedge.vertex.z,
+        ]
+
+        vertex_b = [
+            self.halfedge.next.vertex.x,
+            self.halfedge.next.vertex.y,
+            self.halfedge.next.vertex.z,
+        ]
+
+        vertex_c = [
+            self.halfedge.prev.vertex.x,
+            self.halfedge.prev.vertex.y,
+            self.halfedge.prev.vertex.z,
+        ]
+
+        vertex_ac = [u - v for u, v in zip(vertex_a, vertex_c)]
+        vertex_bc = [u - v for u, v in zip(vertex_b, vertex_c)]
+
+        area = cross_product(vertex_ac, vertex_bc)
+
+        area = norm(area) / 2.0
+
+        return area
 
 
 class Halfedge:

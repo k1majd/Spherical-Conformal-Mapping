@@ -26,14 +26,6 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             vertex.y /= norm
             vertex.z /= norm
 
-    def give_mapped_mesh(self, mapping):
-        vertex_list = []  # stores the vertex list of spherical mesh
-
-        for vertex in self.vertices:
-            vertex_list.append(mapping[vertex.index])
-
-        self.vertices = vertex_list
-
     def get_faces_of_vertex(self, vertex):
         """get the faces of a vertex"""
         faces = []
@@ -189,12 +181,79 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
 
         pass
 
-    def conformal_mapping(self):
+    def compute_mass_center(self):
+        center = [0.0, 0.0, 0.0]
+        mass = 0.0
+        for vertex in self.vertices:
+            center[0] += vertex.x * vertex.area
+            center[1] += vertex.y * vertex.area
+            center[2] += vertex.z * vertex.area
+            mass += vertex.area
+
+        center = [x / mass for x in center]
+
+        for vertex in self.vertices:
+            vertex.x -= center[0]
+            vertex.y -= center[1]
+            vertex.z -= center[2]
+            norm = vertex.norm()
+            vertex.x /= norm
+            vertex.y /= norm
+            vertex.z /= norm
+
+    def harmonic_mapping(self, dE=0.00001):
+        curr_energy = self.compute_energy()
+        print(f"Initial Tuette energy: {curr_energy}")
+        prev_energy = 1000
+        i = 0
+        while abs(curr_energy - prev_energy) > dE:
+            prev_energy = curr_energy
+            self.compute_gradient()
+            self.update_mesh()
+            self.compute_mass_center()
+            curr_energy = self.compute_energy()
+            print(
+                f"Current harmonic energy - {i}: {curr_energy}, Diff: {curr_energy - prev_energy}"
+            )
+            i += 1
+
+    def init_area(self):
+        for vertex in self.vertices:
+            face_list = self.get_faces_of_vertex(vertex)
+            area = 0.0
+            for face in face_list:
+                face_area = face.get_area()
+                area += face_area
+            vertex.area = area / 3.0
+
+    def save_halfmesh_as_obj(self, file_name):
+        file_name = file_name + ".obj"
+        with open(file_name, "w") as open_file:
+            for vertex in self.vertices:
+                lv = vertex.get_vertex()
+                open_file.write("v {} {} {} \n".format(lv[0], lv[1], lv[2]))
+
+            for face in self.facets:
+                open_file.write(
+                    "f {} {} {}\n".format(face.a + 1, face.b + 1, face.c + 1)
+                )
+
+    def conformal_mapping(self, filename):
         self.init_mesh_neighboring()
         self.init_kuv()
+        self.init_area()
+
+        # calculate star map
         self.star_map()
-        # self.give_mapped_mesh(mapping)
+        self.save_halfmesh_as_obj(filename + "_star")
+
+        # calculate tuette map
         self.tuette_map()
+        self.save_halfmesh_as_obj(filename + "_tuette")
+
+        # calculate harmonic map
+        self.harmonic_mapping()
+        self.save_halfmesh_as_obj(filename + "_harmonic")
 
     def cross_product(x1, x2):
         return [
