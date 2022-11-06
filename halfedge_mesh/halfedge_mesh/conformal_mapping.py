@@ -202,16 +202,16 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             vertex.z /= norm
 
     def harmonic_mapping(self, dE=0.00001):
-        curr_energy = self.compute_energy()
-        print(f"Initial Tuette energy: {curr_energy}")
+        curr_energy = self.compute_energy("harmonic")
+        print(f"Initial harmonic energy: {curr_energy}")
         prev_energy = 1000
         i = 0
         while abs(curr_energy - prev_energy) > dE:
             prev_energy = curr_energy
-            self.compute_gradient()
+            self.compute_gradient("harmonic")
             self.update_mesh()
             self.compute_mass_center()
-            curr_energy = self.compute_energy()
+            curr_energy = self.compute_energy("harmonic")
             print(
                 f"Current harmonic energy - {i}: {curr_energy}, Diff: {curr_energy - prev_energy}"
             )
