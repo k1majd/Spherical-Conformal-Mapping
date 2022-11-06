@@ -67,26 +67,6 @@ def main(mesh_name):
 
     mesh = halfedge_mesh.ConformalMap(mesh_path)
     mesh.conformal_mapping(save_path)
-    # save_halfmesh_as_obj(mesh, f"{save_path}")
-    # save_halfmesh_as_off(mesh, f"{save_path}")
-
-    # for i in range(iterations - 1):
-    #     print(f"loop subdivision, iteration {i + 1}")
-    #     mesh = halfedge_mesh.ConformalMap(mesh_path)
-    #     if i > 0:
-    #         # remove the old mesh
-    #         os.remove(mesh_path)
-    #     new_mesh = mesh.conformal_mapping()
-    #     save_halfmesh_as_off(new_mesh, f"{save_path}_{i+1}")
-    #     mesh_path = f"{save_path}_{i+1}.off"
-    # print("loop subdivision, iteration", iterations)
-    # mesh = halfedge_mesh.SubDivider(mesh_path)
-    # new_mesh = mesh.loop_subdivision()
-    # if iterations > 1:
-    #     os.remove(mesh_path)
-    # save_halfmesh_as_obj(new_mesh, f"{save_path}_{iterations}")
-    # current_directory = os.getcwd() + "/" + f"{save_path}_{iterations}.obj"
-    # print("mesh saved at", current_directory)
 
 
 if __name__ == "__main__":
