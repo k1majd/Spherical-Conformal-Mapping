@@ -142,8 +142,11 @@ class ConformalMap(halfedge_mesh.HalfedgeMesh):
             for i in range(len(neighbor_vertices)):
                 temp_grad = Vertex.subtract(vertex, neighbor_vertices[i])
                 if string == "harmonic":
-                    gradient = [x + y for x, y in zip(gradient, temp_grad)]
-                    gradient = [x * neighbor_halfedges[i].kuv for x in gradient]
+                    gradient = [
+                        x + y * neighbor_halfedges[i].kuv
+                        for x, y in zip(gradient, temp_grad)
+                    ]
+                    # gradient = [x * neighbor_halfedges[i].kuv for x in gradient]
                 else:
                     gradient = [x + y for x, y in zip(gradient, temp_grad)]
             vertex.abs_gradient = self.calculate_abs_dev(gradient, vertex)
