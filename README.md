@@ -4,6 +4,9 @@ This package performs Spherical Conformal Mapping on a given triangular mesh sav
 For the construction of triangular mesh from a given .off file, the **halfedge_mesh** package in 
 https://github.com/carlosrojas/halfedge_mesh.git is used. 
 
+# Loop Subdiviosion
+Link: https://github.com/k1majd/loop_subdivison
+
 # Usage
 To perform the mapping: 
 1. Clone this repository.
